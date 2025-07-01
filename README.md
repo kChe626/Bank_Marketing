@@ -48,7 +48,7 @@ for col in numeric_cols:
 
 A cleaned dataset saved as [melb_data_cleaned.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv), ready for SQL loading and BI visualization.
 
-- [See full cleaning code](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)
+- [See full cleaning code Python](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)
 
 ---
 
@@ -102,7 +102,8 @@ ORDER BY month;
 
 An interactive Power BI dashboard was developed to visualize marketing and conversion insights from the bank’s campaign dataset. The dashboard integrates data prepared through Python cleaning and SQL analysis, enabling strategic exploration of client behavior and campaign outcomes.
 
-![Dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)
+![Download Dashboard](https://github.com/kChe626/Melbourne-Housing-Project/blob/main/Housing_Dashboard.gif)
+
 
 ## Key Features
 
