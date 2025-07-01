@@ -9,7 +9,7 @@ This project analyzes a Portuguese bank’s marketing campaign to uncover deposi
 
 ## Dataset
 
-- Source: [Bank Marketing dataset](****)
+- Source: [Bank Marketing dataset](https://github.com/kChe626/Bank_Marketing/blob/main/bank.csv)
 - Columns includes age, job, marital, education, balance, housing, loan, contact, campaign, previous outcome, deposit (target)
 
 ## Python Data Cleaning Steps
@@ -46,9 +46,9 @@ for col in numeric_cols:
 
 ## Output
 
-A cleaned dataset saved as [melb_data_cleaned.csv](****), ready for SQL loading and BI visualization.
+A cleaned dataset saved as [melb_data_cleaned.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv), ready for SQL loading and BI visualization.
 
-- [See full cleaning code](****)
+- [See full cleaning code](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)
 
 ---
 
@@ -91,7 +91,7 @@ ORDER BY month;
 - Housing loan vs deposit behavior: Assessed whether having a housing loan influenced the likelihood of a deposit.
 - Age group segmentation: Grouped clients by age and calculated conversion rates for each segment.
 
-[See full analysis code SQL](****)
+[See full analysis code SQL](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_Analysis_SQL.sql)
 
 ## Output 
 
@@ -102,7 +102,7 @@ ORDER BY month;
 
 An interactive Power BI dashboard was developed to visualize marketing and conversion insights from the bank’s campaign dataset. The dashboard integrates data prepared through Python cleaning and SQL analysis, enabling strategic exploration of client behavior and campaign outcomes.
 
-![Dashboard](****)
+![Dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)
 
 ## Key Features
 
@@ -159,13 +159,13 @@ SWITCH(TRUE(),
 
 ## Files
 
-[melb_data_cleaned — Python code for cleaning](***)
+[Bank_cleaing_Python— Python code for cleaning](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)
 
-[cleaned_melb_data — Cleaned and ready for SQL import.](***)
+[bank_cleaned.csv — Cleaned and ready for SQL import.](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)
 
-[sql_melb_data — MySQL anaylsis](***)
+[Bank_Analysis_SQL — MySQL anaylsis](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_Analysis_SQL.sql)
 
-[Power_BI_dashboard](***)
+[Power_BI_dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)
 
 ## Dataset Source
 
