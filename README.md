@@ -102,7 +102,7 @@ ORDER BY month;
 
 An interactive Power BI dashboard was developed to visualize marketing and conversion insights from the bank’s campaign dataset. The dashboard integrates data prepared through Python cleaning and SQL analysis, enabling strategic exploration of client behavior and campaign outcomes.
 
-![Download Dashboard](https://github.com/kChe626/Melbourne-Housing-Project/blob/main/Housing_Dashboard.gif)
+![Download Dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_dashboard_preview.gif)
 
 
 ## Key Features
@@ -126,6 +126,8 @@ Page 4: Financial Insights
 - Histogram of balance
 - Deposits by Balance Group
 - Conversion by Housing & Loan status
+
+- - [Download for dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)
 
 ## DAX Measures & Columns
 Key Measures
