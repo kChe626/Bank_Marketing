@@ -5,12 +5,12 @@
 
 # Bank Marketing Campaign Analysis
 
-This project analyzes a Portuguese bank’s marketing campaign to uncover deposit behavior insights and improve customer targeting. It includes data cleaning with Python, exploratory SQL analysis, and a multi-page Power BI dashboard using DAX and calculated columns.
+This project analyzes a bank’s marketing campaign to uncover deposit behavior insights and improve customer targeting. It includes data cleaning with Python, exploratory SQL analysis, and a multi-page Power BI dashboard using DAX and calculated columns.
 
 ## Dataset
 
 - Source: [Bank Marketing dataset](https://github.com/kChe626/Bank_Marketing/blob/main/bank.csv)
-- Columns includes age, job, marital, education, balance, housing, loan, contact, campaign, previous outcome, deposit (target)
+- Columns includes age, job, marital, education, balance, housing, loan, contact, campaign, previous outcome, deposit
 
 ## Python Data Cleaning Steps
 
@@ -96,7 +96,6 @@ ORDER BY month;
 ## Output 
 
 - These queries uncovered high-performing job and age segments, seasonal patterns in deposits, and financial traits associated with higher conversion.
-- The insights were foundational to building Power BI dashboards, enabling interactive filtering by job, balance tier, age group, and more.
 
 ## Power BI Dashboard
 
@@ -127,15 +126,15 @@ Page 4: Financial Insights
 - Deposits by Balance Group
 - Conversion by Housing & Loan status
 
-- - [Download for dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)
+- [Download for dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)
 
 ## DAX Measures & Columns
 Key Measures
 ```dax
-Total Contacts = COUNTROWS(bank_data)
-Total Deposits = CALCULATE(COUNTROWS(bank_data), bank_data[deposit] = "yes")
+Total Contacts = COUNTROWS(bank_cleaned)
+Total Deposits = CALCULATE(COUNTROWS(bank_cleaned), bank_data[deposit] = "yes")
 Conversion Rate (%) = DIVIDE([Total Deposits], [Total Contacts], 0)
-Avg Call Duration = AVERAGE(bank_data[duration])
+Avg Call Duration = AVERAGE(bank_cleaned[duration])
 ```
 Calculated Columns
 
