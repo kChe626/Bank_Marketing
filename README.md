@@ -1,62 +1,65 @@
+# **Bank Marketing Campaign Analysis — Python Cleaning, SQL Analysis & Power BI Dashboard**  
 ![Python](https://img.shields.io/badge/Python-3776AB.svg?style=for-the-badge&logo=Python&logoColor=white)
 ![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
 ![Power BI](https://img.shields.io/badge/power_bi-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
 
+---
 
-# Bank Marketing Campaign Analysis
+## **Overview**  
+This project analyzes a bank’s marketing campaign dataset to uncover customer deposit behavior and improve targeting strategies.  
+It includes Python-based cleaning, SQL-driven analysis, and an interactive multi-page Power BI dashboard.
 
-This project analyzes a bank’s marketing campaign to uncover deposit behavior insights and improve customer targeting. It includes data cleaning with Python, exploratory SQL analysis, and a multi-page Power BI dashboard using DAX and calculated columns.
+---
 
-## Dataset
+## **Dataset**
+- **Source:** [bank.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank.csv)  
+- **Columns:** age, job, marital, education, balance, housing, loan, contact, campaign, previous outcome, deposit, and others
 
-- Source: [Bank Marketing dataset](https://github.com/kChe626/Bank_Marketing/blob/main/bank.csv)
-- Columns includes age, job, marital, education, balance, housing, loan, contact, campaign, previous outcome, deposit
+---
 
-## Python Data Cleaning Steps
+## **Objectives**
+- Clean and prepare the dataset for SQL analysis  
+- Identify key customer segments with high deposit conversion rates  
+- Visualize campaign performance in Power BI  
 
-Used pandas to:
-- Standardized column names: Renamed all columns to lowercase and replaced spaces and periods with underscores for consistency and SQL compatibility.
-- Handled unknown values: Replaced all unknown entries with NaN to treat them as missing values.
-- Cleaned text fields: Lowercased and trimmed whitespace in key columns.
-- Normalized job titles: Removed trailing periods in job titles (e.g., admin. → admin) for consistency across values.
-- Constructed valid date column: Combined day, month, and a fixed year into a new date column using pandas' to_datetime.
-- Converted numeric fields: Ensured numeric columns were parsed as numbers.
-- Removed duplicates: Dropped all exact duplicate rows to prevent skewed aggregation or analysis.
-- Exported clean data
+---
 
- ## Example cleaning snippet
+## **Data Cleaning Process (Python)**
+**Key Steps:**
+- Standardized column names for SQL compatibility  
+- Replaced `'unknown'` values with `NULL`  
+- Cleaned text fields (lowercase, trimmed spaces)  
+- Removed trailing punctuation in job titles  
+- Constructed a valid `date` column from day, month, and a fixed year  
+- Converted numeric fields and removed duplicates
 
+**Example Snippets:**  
 ```python
 # Replace 'unknown' with NaN
 df.replace('unknown', np.nan, inplace=True)
 
-# Clean text fields
-for col in df.select_dtypes(include='object').columns:
-    df[col] = df[col].astype(str).str.strip().str.lower()
-
-# Create full date from day + month + fixed year (2014)
+# Create date column from day, month, and fixed year
 df['day'] = df['day'].astype(str).str.zfill(2)
 df['date'] = pd.to_datetime(df['day'] + '-' + df['month'] + '-2014', dayfirst=True, errors='coerce')
 
-# Convert numeric columns
-numeric_cols = ['age', 'balance', 'duration', 'campaign', 'pdays', 'previous']
-for col in numeric_cols:
-    df[col] = pd.to_numeric(df[col], errors='coerce')
+# Clean text fields
+for col in df.select_dtypes(include='object').columns:
+    df[col] = df[col].astype(str).str.strip().str.lower()
 ```
 
-## Output
-
-A cleaned dataset saved as [melb_data_cleaned.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv), ready for SQL loading and BI visualization.
-
-- [See full cleaning code Python](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)
+**Full Cleaning Script:** [Bank_cleaning_Python.ipynb](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)  
+**Cleaned Dataset:** [bank_cleaned.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)
 
 ---
 
-##  SQL Analysis Process
+## **SQL Analysis**
+**Objectives:**
+- Calculate overall deposit conversion rate  
+- Analyze deposits by job, education, and age group  
+- Track monthly deposit trends  
+- Examine financial behavior impact on deposits
 
-The cleaned banking dataset was imported into MySQL database for structured querying and business-driven analysis. MySQL was used to explore conversion trends, customer segment behavior, and financial correlations.
-
-## Example SQL snippet
+**Example Queries:**
 ```sql
 -- Conversion rate
 SELECT 
@@ -65,7 +68,6 @@ SELECT
     ROUND(SUM(CASE WHEN deposit = 'yes' THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS conversion_rate_percent
 FROM bank_cleaned;
 
-
 -- Deposits by job
 SELECT job, COUNT(*) AS total_clients,
        SUM(CASE WHEN deposit = 'yes' THEN 1 ELSE 0 END) AS deposits,
@@ -73,101 +75,47 @@ SELECT job, COUNT(*) AS total_clients,
 FROM bank_cleaned
 GROUP BY job
 ORDER BY conversion_rate_percent DESC;
-
--- Monthly deposit trend
-SELECT DATE_FORMAT(date, '%Y-%m') AS month,
-       COUNT(*) AS total_contacts,
-       SUM(CASE WHEN deposit = 'yes' THEN 1 ELSE 0 END) AS deposits
-FROM bank_cleaned
-GROUP BY month
-ORDER BY month;
 ```
 
-## Key Analyses Performed
+**Full Analysis Script:** [Bank_Analysis_SQL.sql](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_Analysis_SQL.sql)
 
-- Deposit conversion rate: Calculated the overall conversion rate from contacts to successful deposits.
-- Deposits by job and education: Identified which occupations and education levels were most likely to convert.
-- Monthly deposit trend: Analyzed how deposits changed over time to uncover campaign performance patterns.
-- Housing loan vs deposit behavior: Assessed whether having a housing loan influenced the likelihood of a deposit.
-- Age group segmentation: Grouped clients by age and calculated conversion rates for each segment.
+---
 
-[See full analysis code SQL](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_Analysis_SQL.sql)
+## **Key Insights**
+- Certain occupations and education levels have significantly higher conversion rates  
+- Seasonal patterns suggest optimal campaign timing  
+- Customers with no housing or personal loans are more likely to make deposits  
+- Balance distribution indicates distinct customer segments
 
-## Output 
+---
 
-- These queries uncovered high-performing job and age segments, seasonal patterns in deposits, and financial traits associated with higher conversion.
+## **Preview**
+![Bank Marketing Power BI Dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_dashboard_preview.gif)
 
-## Power BI Dashboard
+---
 
-An interactive Power BI dashboard was developed to visualize marketing and conversion insights from the bank’s campaign dataset. The dashboard integrates data prepared through Python cleaning and SQL analysis, enabling strategic exploration of client behavior and campaign outcomes.
+## **How to Open**
+1. Download the Power BI dashboard: [bank_power_bi.pbix](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)  
+2. Open in Power BI Desktop  
+3. Connect to the cleaned dataset: [bank_cleaned.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)  
+---
 
-![Download Dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_dashboard_preview.gif)
+## **Use Cases**
+- **Marketing Optimization:** Target high-conversion customer segments  
+- **Campaign Planning:** Schedule campaigns during peak performance months  
+- **Product Strategy:** Identify customer needs based on loan and balance data  
+- **Data-Driven Decision-Making:** Use conversion metrics to refine outreach
+  
+---
 
+## **Files**
+- [Python Cleaning Script](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)
+- [Cleaned Dataset](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)  
+- [SQL Analysis Script](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_Analysis_SQL.sql)  
+- [Power BI Dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)  
 
-## Key Features
+---
 
-Page 1: Campaign Overview
-- KPIs: Total Contacts, Deposits, Conversion Rate, Avg Call Duration
-- Daily deposit & contact trends
-- Filters: Date, Job, Education, Contact
-
-Page 2: Customer Segments
-- Deposits by Job and Education
-- Marital Status Donut Chart
-- Age Group Matrix
-
-Page 3: Campaign Effectiveness
-- Poutcome and Contact Method comparisons
-- Campaign frequency table
-- Slicers: Poutcome, Contact
-
-Page 4: Financial Insights
-- Histogram of balance
-- Deposits by Balance Group
-- Conversion by Housing & Loan status
-
-- [Download for dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)
-
-## DAX Measures & Columns
-Key Measures
-```dax
-Total Contacts = COUNTROWS(bank_cleaned)
-Total Deposits = CALCULATE(COUNTROWS(bank_cleaned), bank_data[deposit] = "yes")
-Conversion Rate (%) = DIVIDE([Total Deposits], [Total Contacts], 0)
-Avg Call Duration = AVERAGE(bank_cleaned[duration])
-```
-Calculated Columns
-
-```dax
-Age Group = 
-SWITCH(TRUE(),
-    bank_data[age] < 25, "Under 25",
-    bank_data[age] <= 34, "25–34",
-    bank_data[age] <= 44, "35–44",
-    bank_data[age] <= 54, "45–54",
-    bank_data[age] <= 64, "55–64",
-    "65+"
-)
-
-Balance Group = 
-SWITCH(TRUE(),
-    bank_data[balance] < 0, "Below 0",
-    bank_data[balance] <= 500, "0–500",
-    bank_data[balance] <= 1000, "501–1000",
-    bank_data[balance] <= 3000, "1001–3000",
-    "3000+"
-)
-```
-
-## Files
-
-[Bank_cleaing_Python— Python code for cleaning](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)
-
-[bank_cleaned.csv — Cleaned and ready for SQL import.](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)
-
-[Bank_Analysis_SQL — MySQL anaylsis](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_Analysis_SQL.sql)
-
-[Power_BI_dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)
 
 ## Dataset Source
 
