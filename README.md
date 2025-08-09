@@ -108,6 +108,11 @@ ORDER BY conversion_rate_percent DESC;
   
 ---
 
+## **Business Relevance**
+This analysis helps marketing and operations teams identify high-conversion customer segments, assess campaign timing effectiveness, and optimize outreach strategies. The results can streamline call center workflows, improve campaign targeting, and increase deposit conversion rates.
+
+---
+
 ## **Files**
 - [Python Cleaning Script](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)
 - [Cleaned Dataset](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)  
