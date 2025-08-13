@@ -1,4 +1,4 @@
-# **Bank Marketing Campaign Analysis — Python Cleaning, SQL Analysis & Power BI Dashboard**  
+# **Bank Operations KPI Dashboard — Python Cleaning, SQL Analysis & Power BI Dashboard**  
 ![Python](https://img.shields.io/badge/Python-3776AB.svg?style=for-the-badge&logo=Python&logoColor=white)
 ![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
 ![Power BI](https://img.shields.io/badge/power_bi-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
@@ -6,86 +6,90 @@
 ---
 
 ## **Overview**  
-This project analyzes a bank’s marketing campaign dataset to uncover customer deposit behavior and improve targeting strategies.  
-It includes Python-based cleaning, SQL-driven analysis, and an interactive multi-page Power BI dashboard.
+This project builds an operational performance dashboard for a bank’s contact center, focusing on efficiency, conversion performance, and customer segment trends.
+It uses Python for preprocessing, SQL for KPI aggregation, and Power BI for a multi-page, interactive operations dashboard.
 
 ---
 
 ## **Dataset**
-- **Source:** [bank.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank.csv)  
-- **Columns:** age, job, marital, education, balance, housing, loan, contact, campaign, previous outcome, deposit, and others
+- **Source:** [bank_cleaned_operational.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank.csv)  
+- **Columns:** customer demographics, contact channel, call duration, conversion outcome, age band, job role, and operational flags (repeat contact, follow-up, prior contact)
 
 ---
 
 ## **Objectives**
-- Clean and prepare the dataset for SQL analysis  
-- Identify key customer segments with high deposit conversion rates  
-- Visualize campaign performance in Power BI  
-
+- Clean and prepare operational contact center data for SQL analysis
+- Aggregate KPIs by month, week, contact channel, age band, and job role    
+- Build an interactive Power BI dashboard to monitor operational efficiency and conversion outcomes
 ---
 
 ## **Data Cleaning Process (Python)**
 **Key Steps:**
-- Standardized column names for SQL compatibility  
-- Replaced `'unknown'` values with `NULL`  
-- Cleaned text fields (lowercase, trimmed spaces)  
-- Removed trailing punctuation in job titles  
-- Constructed a valid `date` column from day, month, and a fixed year  
-- Converted numeric fields and removed duplicates
+- Standardized column names for SQL compatibility
+- Replaced placeholder values (e.g., 'unknown') with NULL
+- Parsed and validated date fields into a reliable date format
+- Converted flags into numeric indicators (0/1)
+- Exported cleaned dataset for SQL aggregation
 
 **Example Snippets:**  
 ```python
 # Replace 'unknown' with NaN
 df.replace('unknown', np.nan, inplace=True)
 
-# Create date column from day, month, and fixed year
-df['day'] = df['day'].astype(str).str.zfill(2)
-df['date'] = pd.to_datetime(df['day'] + '-' + df['month'] + '-2014', dayfirst=True, errors='coerce')
+# Create parsed date column
+df['date_parsed'] = pd.to_datetime(df['date'], errors='coerce')
 
-# Clean text fields
-for col in df.select_dtypes(include='object').columns:
-    df[col] = df[col].astype(str).str.strip().str.lower()
+# Convert flag fields to integers
+flag_cols = ['converted', 'is_repeat_contact', 'is_followup', 'had_prior_contact']
+df[flag_cols] = df[flag_cols].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+
 ```
 
-**Full Cleaning Script:** [Bank_cleaning_Python.ipynb](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)  
-**Cleaned Dataset:** [bank_cleaned.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)
+**Full Cleaning Script:** [Bank_Operation_Python.ipynb](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_cleaning_Python)  
+**Cleaned Dataset:** [bank_cleaned_operational.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)
 
 ---
 
 ## **SQL Analysis**
 **Objectives:**
-- Calculate overall deposit conversion rate  
-- Analyze deposits by job, education, and age group  
-- Track monthly deposit trends  
-- Examine financial behavior impact on deposits
+- Calculate total contacts, conversions, and conversion rate over time
+- Measure average call handling time and repeat/follow-up contact rates
+- Break down KPIs by contact channel, age band, and job role
 
 **Example Queries:**
 ```sql
--- Conversion rate
-SELECT 
-    COUNT(*) AS total_clients,
-    SUM(CASE WHEN deposit = 'yes' THEN 1 ELSE 0 END) AS deposits_made,
-    ROUND(SUM(CASE WHEN deposit = 'yes' THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS conversion_rate_percent
-FROM bank_cleaned;
+-- Monthly KPI overview
+SELECT
+    ym,
+    COUNT(*) AS total_contacts,
+    SUM(converted_i) AS conversions,
+    ROUND(100 * SUM(converted_i) / NULLIF(COUNT(*), 0), 2) AS conversion_rate_pct,
+    ROUND(AVG(call_seconds_n), 1) AS avg_call_seconds,
+    ROUND(100 * AVG(is_repeat_contact_i), 2) AS repeat_contact_rate_pct
+FROM v_ops_base
+WHERE date_final IS NOT NULL
+GROUP BY ym
+ORDER BY ym;
 
--- Deposits by job
-SELECT job, COUNT(*) AS total_clients,
-       SUM(CASE WHEN deposit = 'yes' THEN 1 ELSE 0 END) AS deposits,
-       ROUND(SUM(CASE WHEN deposit = 'yes' THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS conversion_rate_percent
-FROM bank_cleaned
-GROUP BY job
-ORDER BY conversion_rate_percent DESC;
+-- Channel performance
+SELECT
+    ym,
+    COALESCE(contact, 'unknown') AS contact_channel,
+    COUNT(*) AS total_contacts,
+    ROUND(100 * SUM(converted_i)/NULLIF(COUNT(*),0), 2) AS conversion_rate_pct
+FROM v_ops_base
+GROUP BY ym, contact_channel
+ORDER BY ym, contact_channel;
 ```
 
-**Full Analysis Script:** [Bank_Analysis_SQL.sql](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_Analysis_SQL.sql)
+**Full Analysis Script:** [Bank_Operation_SQL.sql](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_Analysis_SQL.sql)
 
 ---
 
 ## **Key Insights**
-- Certain occupations and education levels have significantly higher conversion rates  
-- Seasonal patterns suggest optimal campaign timing  
-- Customers with no housing or personal loans are more likely to make deposits  
-- Balance distribution indicates distinct customer segments
+- Repeat contact and follow-up rates provide insight into service efficiency
+- Average call handling time highlights resource and process optimization opportunities
+- Seasonal patterns in contact activity can inform staffing and campaign timing
 
 ---
 
@@ -93,23 +97,29 @@ ORDER BY conversion_rate_percent DESC;
 ![Bank Marketing Power BI Dashboard](https://github.com/kChe626/Bank_Marketing/blob/main/Bank_dashboard_preview.gif)
 
 ---
-
+## **Dashboard Pages**
+1. Executive Ops Overview — High-level KPIs, trends, and monthly detail table
+2. Channel Performance — Volume and conversion trends by contact channel
+3. Age Band Analysis — Segment performance by customer age group
+4. Job Role Targeting — Conversion efficiency and contact volume by job category    
+---
 ## **How to Open**
-1. Download the Power BI dashboard: [bank_power_bi.pbix](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)  
+1. Download the Power BI dashboard: [Bank_Operation.pbix](https://github.com/kChe626/Bank_Marketing/blob/main/bank_power_bi.pbix)  
 2. Open in Power BI Desktop  
-3. Connect to the cleaned dataset: [bank_cleaned.csv](https://github.com/kChe626/Bank_Marketing/blob/main/bank_cleaned.csv)  
+3. Use slicers to filter by date range, channel, age band, or job role
 ---
 
 ## **Use Cases**
-- **Marketing Optimization:** Target high-conversion customer segments  
-- **Campaign Planning:** Schedule campaigns during peak performance months  
-- **Product Strategy:** Identify customer needs based on loan and balance data  
-- **Data-Driven Decision-Making:** Use conversion metrics to refine outreach
+- Contact Center Management: Track efficiency, reduce repeat contacts, and optimize resource allocation
+- Process Improvement: Identify channels or segments with low conversion rates for targeted interventions
+- Staffing & Scheduling: Align workforce planning with seasonal and weekly performance patterns
+- Strategic Planning: Use KPI trends to guide service and marketing decisions
   
 ---
 
 ## **Business Relevance**
-This analysis helps marketing and operations teams identify high-conversion customer segments, assess campaign timing effectiveness, and optimize outreach strategies. The results can streamline call center workflows, improve campaign targeting, and increase deposit conversion rates.
+By integrating operational KPIs into a single interactive dashboard, this project enables data-driven operations management.
+The insights help reduce inefficiencies, improve customer experience, and support strategic decision-making in a banking environment.
 
 ---
 
@@ -124,5 +134,4 @@ This analysis helps marketing and operations teams identify high-conversion cust
 
 ## Dataset Source
 
-- Melbourne Housing dataset from [https://www.kaggle.com/datasets/janiobachmann/bank-marketing-dataset?select=bank.csv]
 
